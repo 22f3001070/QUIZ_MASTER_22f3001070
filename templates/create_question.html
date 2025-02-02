@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <title>Admin Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: rgb(237, 233, 233);
+        }
+
+       
+
+
+
+
+        .btn-group {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+
+
+
+        .chapter-container {
+            max-width: 500px;
+            margin: 50px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .chapter-container h2 {
+            color: orange;
+            text-align: center;
+            font-size: 24px;
+        }
+        .chapter-container label {
+            font-weight: bold;
+            color: blue;
+            font-size: 18px;
+            display: block;
+            margin-top: 15px;
+        }
+        .chapter-container input, .chapter-container textarea {
+            width: 100%;
+            font-size: 16px;
+            padding: 10px;
+            margin-top: 5px;
+        }
+
+
+
+    </style>
+</head>
+<body>
+
+    <h1> New Question </h1>
+    <h2 style="text-align: center; color: green;">{{ quiz.title }}</h2>
+
+    <div class = "chapter-container">
+        <form method="POST" action="{{ url_for('controllers.create_question',quiz_id = quiz.id,chapter_id = chapter.id) }}">
+            <!--
+            <div>
+                <label for="qid">Q_id :</label>
+                <input type="number" id="qid" name="qid" required>
+            </div>-->
+
+            <div>
+                <label for="qtitle">Q_Title :</label>
+                <input type="text" id="qtitle" name="qtitle" required>
+            </div>
+            
+            <div>
+                <label for="qstatement">Q_statement :</label>
+                <textarea id="qstatement" name="qstatement" required></textarea>
+            </div>
+
+            <div>
+
+
+
+            </div class = "chapter-container">
+                <h3>Creating options<h3>
+                
+                <div>
+                    <label for="op1">Option-1 :</label>
+                    <input type="text" id="op1" name="op1" required>
+                </div>
+
+                <div>
+                    <label for="op2">Option-2 :</label>
+                    <input type="text" id="op2" name="op2" required>
+                </div>
+
+                <div>
+                    <label for="op3">Option-3 :</label>
+                    <input type="text" id="op3" name="op3" required>
+                </div>
+
+                <div>
+                    <label for="op4">Option-4 :</label>
+                    <input type="text" id="op4" name="op4" required>
+                </div>
+
+
+                <div>
+                    <label for="cop">Correct option :</label> <!--A,B,C,D-->
+                    <input type="text" id="cop" name="cop" required>
+                </div>
+
+
+            
+
+
+            <div class="btn-group">
+                <button type="submit" class="btn btn-primary">Save</button>
+                <a href="{{ url_for('controllers.admin_quizzes') }}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+
+
+   
+
+
+</body>
+
+
+</html>
