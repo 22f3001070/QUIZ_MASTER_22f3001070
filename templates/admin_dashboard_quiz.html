@@ -267,14 +267,14 @@
         </p>
 
         <p>
-            Time: {{ quiz.time }}
+            Time: {{ quiz.time }} <!--Time need to be updated in edit quiz even if u dont want to-->
         </p>
         
         <p>
             Duration(mins): {{ quiz.duration }}
         </p>
         <p>
-            Rules: {{ quiz.rules }}
+            Rules: {{ quiz.rules }} <!--Rules is overflowing-->
         </p>
         
         
@@ -283,7 +283,7 @@
                 <button class="btn btn-sm btn-warning">Edit</button>
             </form>
             <form align = 'right'  action = "{{ url_for('controllers.delete_quiz', quiz_id=quiz.id) }}" method = "POST">
-                <button class="btn btn-sm btn-danger">Delete</button>
+                <button class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete Quiz : {{quiz.title}}?');">Delete</button>
 
             </form>
         </div> 
@@ -311,7 +311,7 @@
                             <button class="btn btn-sm btn-warning">Edit</button>
                         </form><-------->
                         <form   action = "{{ url_for('controllers.delete_question', question_id=q.id, quiz_id = q.quiz_id) }}" method = "POST">
-                            <button class="btn btn-sm btn-danger">Delete</button>
+                            <button class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete Question : {{q.title}}?');">Delete</button>
             
                         </form>
 

@@ -267,7 +267,7 @@
                 <button class="btn btn-sm btn-warning">Edit</button>
             </form>
             <form align = 'right'  action = "{{ url_for('controllers.delete_subject', subject_id=subject.id) }}" method = "POST">
-                <button class="btn btn-sm btn-danger">Delete</button>
+                <button class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete Subject : {{subject.name}}?');">Delete</button>
 
             </form>
         </div> 
@@ -276,7 +276,7 @@
                 <tr>
                     <th>Chapter Name</th>
                     <th>Description</th>
-                    <th>No. of Quizzes</th> <!--WE WILL BE INCREMENTED AS NO OF QUIZZES GETS ADDED-->
+                    <th>No. of Quizzes</th> <!--IT WILL BE INCREMENTED AS NO OF QUIZZES GETS ADDED-->
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -285,13 +285,13 @@
                 <tr>
                     <td>{{ chapter.name }}</td>
                     <td>{{ chapter.description }}</td>
-                    <td>{{ chapter.quizzes|length }}</td>
+                    <td>{{ chapter.quizzes|length }}</td> <!--to get no fo quizzes in a chapter-->
                     <td class="btn-inline">
                         <form  action = "{{ url_for('controllers.edit_chapter', chapter_id=chapter.id, subject_id = subject.id)  }}" method ="get" >
                             <button class="btn btn-sm btn-warning">Edit</button>
                         </form>
                         <form   action = "{{ url_for('controllers.delete_chapter', chapter_id=chapter.id) }}" method = "POST">
-                            <button class="btn btn-sm btn-danger">Delete</button>
+                            <button class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete Chapter : {{chapter.name}}?');">Delete</button>
             
                         </form>
 

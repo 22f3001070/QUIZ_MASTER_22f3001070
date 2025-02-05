@@ -43,16 +43,28 @@ def login():
         password = request.form['password']
 
         user = User.query.filter_by(email=email).first()
+        
+        if user.roles == 'blocked' :
+            flash('You have been Blocked. Contact your administrator for more information.')
+            return redirect(url_for('controllers.login'))
         if user and check_password_hash(user.password, password):
             session['user_id'] = user.id
             session['role'] = user.roles
-            flash("Login successful!")
+            flash("Login successful!") # Oncce we add the toast in user_dashboard it will reflect there only
             if user.roles == 'Admin':
                 return redirect(url_for('controllers.admin_dashboard'))
+            flash('Welcome to the Quiz Master platform')
             return redirect(url_for('controllers.user_dashboard'))
         else:
             flash("Invalid login credentials. Please try again.")
     return render_template('user_login.html')
+
+
+@controllers.route('/scores', methods=['GET', 'POST'])
+def scores():
+    
+    return render_template('scores.html')
+    
 
 # User registration
 @controllers.route('/register', methods=['GET', 'POST'])
@@ -62,9 +74,13 @@ def register():
         email = request.form['email']
         password = generate_password_hash(request.form['password'], method='pbkdf2:sha256')
 
-        existing_user = User.query.filter_by(email=email).first()
-        if existing_user:
+        existing_user_email = User.query.filter_by(email=email).first()
+        existing_user_username = User.query.filter_by(username=username).first()
+        if existing_user_email:
             flash("Email already registered. Please use another email.")
+            return redirect(url_for('controllers.register'))
+        if existing_user_username:
+            flash("Username already registered. Please use another username.")
             return redirect(url_for('controllers.register'))
 
         new_user = User(username=username, email=email, password=password, roles='student')
@@ -75,12 +91,58 @@ def register():
     return render_template('user_register.html')
 
 # User dashboard
-@controllers.route('/dashboard')
+@controllers.route('/dashboard') 
 def user_dashboard():
-    if 'user_id' not in session:
+    if 'user_id' not in session :
         flash('Please log in to access the dashboard.')
         return redirect(url_for('controllers.login'))
-    return render_template('user_dashboard.html')
+    
+    quizzes = Quiz.query.all()  
+    
+    #user_id = session['user_id']
+    user = User.query.get(session['user_id'])
+    
+    current_time = datetime.now()
+    
+    upcoming_quizzes = []
+    for quiz in quizzes:
+        if quiz.date and quiz.time:  # Ensure both date and time exist
+            quiz_datetime = datetime.combine(quiz.date, quiz.time)  # Merge date and time (EXTERNAL SOURCE)
+            if quiz_datetime >= current_time:  # Only show future quizzes
+                upcoming_quizzes.append(quiz)
+                
+    # Fetch quizzes assigned to the user's subjects
+    #user_quizzes = Quiz.query.join(Chapter).join(Subject).filter(Subject.id == Chapter.subject_id).all()
+    # if 'username' not in session:
+    #     return redirect(url_for('controllers.login'))  # Redirect to login if not logged in
+
+    #username = session['username']  # Retrieve username from session
+    
+    return render_template('user_dashboard.html', user=user, quizzes=upcoming_quizzes)
+    
+@controllers.route('/start_quiz') 
+def start_quiz():
+    if 'user_id' not in session :
+        flash('Please log in to access the dashboard.')
+        return redirect(url_for('controllers.login'))
+    
+    
+    
+    return render_template('start_quiz.html')   
+
+
+@controllers.route('/view_quiz/,<int:quiz_id>') 
+def view_quiz(quiz_id):
+    if 'user_id' not in session :
+        flash('Please log in to access the dashboard.')
+        return redirect(url_for('controllers.login'))
+    
+    quiz = Quiz.query.get_or_404(quiz_id)
+    
+    
+    
+    return render_template('view_quiz.html', quiz = quiz)   
+
 
 
 
@@ -408,6 +470,12 @@ def search():
 
 
 
+# Logout
+@controllers.route('/logout')
+def logout_user():
+    session.clear()
+    flash('You have been logged out.')
+    return redirect(url_for('controllers.login'))
 
 # Logout
 @controllers.route('/logout')

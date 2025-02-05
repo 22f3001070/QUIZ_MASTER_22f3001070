@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <title>Admin Dashboard</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(to right, #141E30, #243B55);
+            color: white;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            border: 2px solid gold;
+        }
+
+        h1 {
+            text-align: center;
+            color: gold;
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .quiz-details {
+            text-align: left;
+        }
+
+        .quiz-details label {
+            font-weight: bold;
+            color: gold;
+            font-size: 20px;
+            display: block;
+            margin-top: 15px;
+        }
+
+        .quiz-details p {
+            font-size: 18px;
+            color: white;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px;
+            border-radius: 8px;
+            border-left: 4px solid gold;
+            margin-top: 5px;
+        }
+
+        .btn-group {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .btn {
+            font-size: 18px;
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary {
+            background: rgb(203, 157, 42);
+            color: black;
+            box-shadow: 0 0 10px gold;
+        }
+
+        .btn-secondary:hover {
+            background: rgb(206, 183, 124);
+            color: black;
+            box-shadow: 0 0 15px gold;
+        }
+
+    </style>
+</head>
+<body>
+
+    <h1> Quiz Details</h1>
+
+    <div class="container">
+        
+        <form method="POST">
+            <div class="quiz-details">
+                <label for="qname">Title:</label>
+                <p>{{ quiz.title }}</p>
+
+                <label for="qsubject">Subject:</label>
+                <p>{{ quiz.chapter.subject.name }}</p>
+
+                <label for="qchapter">Chapter:</label>
+                <p>{{ quiz.chapter.name }}</p>
+
+                <label for="qdate">Date:</label>
+                <p>{{ quiz.date }}</p>
+
+                <label for="qtime">Time:</label>
+                <p>{{ quiz.time }}</p>
+
+                <label for="qduration">Duration (minutes):</label>
+                <p>{{ quiz.duration }}</p>
+
+                <label for="qduration">No. of Questions</label>
+                <p>{{ quiz.questions|length }}</p>
+
+                <label for="qrules">Rules:</label>
+                <p>{{ quiz.rules }}</p>
+            </div>
+
+            <div class="btn-group">
+                <a href="{{ url_for('controllers.user_dashboard') }}" class="btn btn-secondary">Close</a>
+            </div>
+        </form>
+
+    </div>
+
+</body>
+</html>
