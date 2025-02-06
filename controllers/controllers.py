@@ -1,7 +1,7 @@
 from model.model import *
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask import Flask, request, render_template, redirect, url_for, flash, session, Blueprint
-from datetime import datetime
+from datetime import datetime, timedelta
 
 controllers = Blueprint('controllers', __name__)
 
@@ -60,10 +60,6 @@ def login():
     return render_template('user_login.html')
 
 
-@controllers.route('/scores', methods=['GET', 'POST'])
-def scores():
-    
-    return render_template('scores.html')
     
 
 # User registration
@@ -90,6 +86,9 @@ def register():
         return redirect(url_for('controllers.login'))
     return render_template('user_register.html')
 
+
+
+
 # User dashboard
 @controllers.route('/dashboard') 
 def user_dashboard():
@@ -104,7 +103,7 @@ def user_dashboard():
     
     current_time = datetime.now()
     
-    upcoming_quizzes = []
+    upcoming_quizzes = [] #for now the quizzes will go away automically when the time has expired, not interfering with if attmepted then disappear.
     for quiz in quizzes:
         if quiz.date and quiz.time:  # Ensure both date and time exist
             quiz_datetime = datetime.combine(quiz.date, quiz.time)  # Merge date and time (EXTERNAL SOURCE)
@@ -120,18 +119,151 @@ def user_dashboard():
     
     return render_template('user_dashboard.html', user=user, quizzes=upcoming_quizzes)
     
-@controllers.route('/start_quiz') 
-def start_quiz():
-    if 'user_id' not in session :
-        flash('Please log in to access the dashboard.')
-        return redirect(url_for('controllers.login'))
     
     
+
     
-    return render_template('start_quiz.html')   
+@controllers.route('/start_quiz/<int:quiz_id>')
+def start_quiz(quiz_id):
+    quiz = Quiz.query.get_or_404(quiz_id)
+    
+    # Get quiz duration from the database (converting to seconds)
+    duration_seconds = quiz.duration * 60  
+
+    # Set quiz start time and end time in session
+    start_time = datetime.now()
+    end_time = start_time + timedelta(seconds=duration_seconds)
+    
+    session["quiz_start_time"] = start_time.strftime("%Y-%m-%d %H:%M:%S")
+    session["quiz_end_time"] = end_time.strftime("%Y-%m-%d %H:%M:%S")
+    session["quiz_id"] = quiz_id  
+    session["current_question"] = 0  # Start from the first question
+
+    return redirect(url_for("controllers.attempt_quiz", quiz_id=quiz_id))
 
 
-@controllers.route('/view_quiz/,<int:quiz_id>') 
+@controllers.route("/attempt_quiz/<int:quiz_id>", methods=["GET", "POST"])
+def attempt_quiz(quiz_id):
+    quiz = Quiz.query.get_or_404(quiz_id)
+    questions = Question.query.filter_by(quiz_id=quiz_id).all()
+
+    
+    total_questions = len(questions)
+    current_index = session.get("current_question", 0) #default:0
+    user_id1 = session.get("user_id") 
+    print(user_id1)
+    
+
+    # Auto-submit if time runs out
+    quiz_end_time = session.get("quiz_end_time")
+    end_time = datetime.strptime(quiz_end_time, "%Y-%m-%d %H:%M:%S")
+    remaining_time = max(0, (end_time - datetime.now()).seconds)
+
+    if remaining_time == 0:
+        return redirect(url_for("controllers.submit_quiz", quiz_id=quiz_id))
+
+    if request.method == "POST":
+        selected_option = request.form.get("selected_option")
+        print(selected_option)
+        
+
+        if selected_option:
+            user_response = UserResponse(
+                user_id=session["user_id"],
+                quiz_id=quiz_id,
+                question_id=questions[current_index].id,
+                selected_option=selected_option
+            )
+            
+            db.session.add(user_response)
+            db.session.commit()
+
+        
+        if "next" in request.form and current_index < total_questions - 1:
+            session["current_question"] += 1
+
+        
+        elif "prev" in request.form and current_index > 0:
+            session["current_question"] -= 1
+
+        # Last question
+        elif "submit" in request.form:
+            return redirect(url_for("controllers.submit_quiz", quiz_id = quiz.id))
+
+    question = questions[session["current_question"]]
+
+    return render_template("start_quiz.html",quiz_id=quiz_id,question=question,total_questions=total_questions,remaining_time=remaining_time,current_index=session["current_question"]
+)
+
+
+
+
+@controllers.route("/submit_quiz/<int:quiz_id>")
+def submit_quiz(quiz_id):
+    
+    user_id1 = session.get("user_id") 
+    user_responses = UserResponse.query.filter_by(user_id=user_id1, quiz_id=quiz_id).all() # ensures it the correct user for the quiz
+   
+    questions = Question.query.filter_by(quiz_id=quiz_id).all()
+    print(questions)
+
+    
+    total_questions = len(questions)
+    
+
+    total_score = 0  
+
+    for response in user_responses:
+        question = Question.query.get((response.question_id, quiz_id))
+        print(response.selected_option)
+        if  response.selected_option == question.correct_option:
+            total_score += 1 #adds only for the correct user
+    percent = (total_score)/total_questions * 100
+            
+    existing_score = Score.query.filter_by(user_id=user_id1, quiz_id=quiz_id).first() 
+    if existing_score:   # else if u try giving the quiz again it willa add another record which shldnt happen as onyl 1 chance shld be given
+                         # basically u can't use the submit button again to add anything
+        flash("Quiz already attempted!!")
+        return redirect(url_for("controllers.user_dashboard"))
+    else:
+        new_score = Score(user_id=user_id1, quiz_id=quiz_id, score=total_score, percent=percent, max_score=total_questions)
+        db.session.add(new_score)       
+    
+    db.session.commit()  
+
+    
+    return redirect(url_for("controllers.scores"))
+
+
+
+
+@controllers.route("/scores")
+def scores():
+    user_id = session.get("user_id")
+    user = User.query.get(session['user_id']) #as the user_id changes only when logged out
+    #quiz_id = session.get("quiz_id")
+    #questions = Question.query.filter_by(quiz_id=quiz_id).all()
+    
+
+    
+    #total_questions = len(questions)
+    #percent = (Score.score)/total_questions * 100
+   
+    user_scores = (
+        db.session.query(Quiz.id.label("quiz_id"), Quiz.title.label("quiz_title"),Quiz.date.label("quiz_date"), Score.score, Score.max_score, Score.percent)
+        .join(Score, Score.quiz_id == Quiz.id)
+        .filter(Score.user_id == user_id)
+        .all()
+    ) #Limitation : If the quiz is deleted by admin the user can't view their scores
+
+    return render_template("scores.html", user_scores=user_scores, user = user)
+
+
+
+
+
+
+@controllers.route('/view_quiz/<int:quiz_id>') 
 def view_quiz(quiz_id):
     if 'user_id' not in session :
         flash('Please log in to access the dashboard.')

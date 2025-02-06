@@ -3,7 +3,7 @@ from controllers.controllers import *
 from model.model import * 
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///shreyash.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///shreyash1.db"
 app.config["SECRET_KEY"] = "shreyash"
 
 db.init_app(app)
@@ -29,12 +29,18 @@ with app.app_context():
     db.create_all()
     create_admin()
     
-#SEARCH FUNCTIONALIT
+#SEARCH FUNCTIONALITY
 #SUMMARY
-#BLOCK AND UNLOCKS THE USER SO THAT USER CAN'T ACCESS ANYMORE
-#USER CAN START THE QUIZ AND FINISH WITHIN THE DURATION PROVIDED  AND SEE THEIR SCORES
-#USERS CAN SEE A SUMMARY REPORT OF THEIR PAST QUIZZES
 
+#Time_stamp in the scores
+#When u click the button it sends a response at that very moment creating multiple scores, we need to ensure 1 q sends only 1 respond and never more!
+#confirm once if the date and time of the quiz is deadline or the actual time of taking a quiz
+
+#Change the title of each page in the end
+#Aesthetics
+
+#Report
+#Video
     
 
 

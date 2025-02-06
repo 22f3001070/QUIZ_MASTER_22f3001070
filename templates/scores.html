@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Scores</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background-color:rgb(124, 150, 177);
+            font-family: Arial, sans-serif;
+        }
+
+        .nav-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #007bff;
+            padding: 15px 30px;
+            color: white;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .nav-bar a {
+            color: white;
+            margin: 0 15px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+
+        .nav-bar a:hover {
+            color: #f8d210;
+        }
+
+        .score-container {
+            background-color: rgba(169, 207, 202, 0.85);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 800px;
+            margin: auto;
+            text-align: center;
+        }
+
+        .table {
+            margin-top: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th, td {
+            text-align: center;
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .btn-home {
+            margin-top: 20px;
+            font-weight: bold;
+            padding: 10px 20px;
+            border-radius: 8px;
+        }
+
+        .search-container input {
+            padding: 8px;
+            border: none;
+            border-radius: 5px;
+            outline: none;
+        }
+        /* Toast Notification */
+        .toast {
+            visibility: hidden;
+            min-width: 250px;
+            margin-left: -125px; /* To center the toast */
+            background-color:rgb(108, 108, 110);
+            color: rgb(58, 220, 226);
+            text-align: center;
+            border-radius: 2px;
+            padding: 10px;
+            position: fixed;
+            z-index: 9999;
+            left: 50%;
+            bottom: 30px;
+            font-size: 17px;
+        }
+
+        .toast.show {
+            visibility: visible;
+            animation: fadein 2.8s, fadeout 2.8s 6.5s;
+        }
+
+        @keyframes fadein {
+            from {bottom: 0; opacity: 0;}
+            to {bottom: 30px; opacity: 1;}
+        }
+
+        @keyframes fadeout {
+            from {opacity: 1;}
+            to {opacity: 0;}
+        }
+    </style>
+</head>
+<body>
+
+    <div class="nav-bar">
+        <div>
+            <a href="{{ url_for('controllers.user_dashboard') }}">Home</a>
+            <a href="{{ url_for('controllers.scores') }}">Scores</a>
+            <a href="#">Summary</a>
+            <a href="{{ url_for('controllers.logout_user') }}">Logout</a>
+        </div>
+        <div class="search-container">
+            <input type="text" placeholder="Search...">
+        </div>
+    </div>
+    <script>
+        function showToast(message) {
+            var toast = document.getElementById("toast");
+            toast.textContent = message;
+            toast.classList.add("show");
+
+            setTimeout(function() {
+                toast.classList.remove("show");
+            }, 8850);
+        }
+
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                showToast("{{ message }}");
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+    </script>
+
+    <div class="score-container">
+
+        <h2 class="mb-4 text-primary">{{ user.username }}'s Scores</h2>
+
+        <table class="table table-hover table-bordered">
+            <thead>
+                <tr>
+                    <th>Quiz ID</th>
+                    <th>Quiz Title</th>
+                    <th>Quiz Date</th>
+                    <th>Score</th>
+                    <th>Percentage</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for score in user_scores %}
+                <tr>
+                    <td>{{ score.quiz_id }}</td>
+                    <td>{{ score.quiz_title }}</td>
+                    <td>{{ score.quiz_date }}</td>
+                    <td>{{ score.score }} / {{ score.max_score }}</td>
+                    <td>{{ score.percent|round(2) }}%</td> <!--2 decimal places-->
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <a href="{{ url_for('controllers.user_dashboard') }}" class="btn btn-primary btn-home">Return to Dashboard</a>
+    </div>
+
+</body>
+</html>

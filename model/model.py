@@ -68,6 +68,15 @@ class Question(db.Model):
     # Relationships
     quiz = db.relationship("Quiz", back_populates="questions")
 
+
+class UserResponse(db.Model):
+    __tablename__ = "user_responses"
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    quiz_id = db.Column(db.Integer, db.ForeignKey("quizzes.id"), nullable=False)
+    question_id = db.Column(db.Integer, db.ForeignKey("questions.id"), nullable=False)
+    selected_option = db.Column(db.String(1), nullable=False)  # A, B, C, or D
+    
 # Score table
 class Score(db.Model):
     __tablename__ = "scores"
@@ -75,6 +84,8 @@ class Score(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     quiz_id = db.Column(db.Integer, db.ForeignKey("quizzes.id"), nullable=False)
     score = db.Column(db.Integer, nullable=False)
+    max_score = db.Column(db.Integer, nullable=False)
+    percent = db.Column(db.Float, nullable=False)
 
     # Relationships
     user = db.relationship("User", back_populates="scores")
