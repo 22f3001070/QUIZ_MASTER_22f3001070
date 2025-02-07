@@ -159,6 +159,7 @@
                     <th>Quiz Title</th>
                     <th>Quiz Date</th>
                     <th>Score</th>
+                    <th>Submitted at</th>
                     <th>Percentage</th>
                 </tr>
             </thead>
@@ -169,6 +170,7 @@
                     <td>{{ score.quiz_title }}</td>
                     <td>{{ score.quiz_date }}</td>
                     <td>{{ score.score }} / {{ score.max_score }}</td>
+                    <td>{{ score.submitted_at.strftime('%Y-%m-%d %H:%M:%S') if score.submitted_at else 'N/A' }}</td>
                     <td>{{ score.percent|round(2) }}%</td> <!--2 decimal places-->
                 </tr>
                 {% endfor %}

@@ -77,7 +77,7 @@
         
 
 
-        <form method="POST" action="{{ url_for('controllers.attempt_quiz', quiz_id=quiz_id) }}">
+        <form id="quizSubmit" method="POST" action="{{ url_for('controllers.attempt_quiz', quiz_id=quiz_id) }}">
             <div class="question">
                 <h4>Question {{ current_index + 1 }} of {{ total_questions }}</h4>
                 <p>{{ question.statement }}</p>
@@ -90,7 +90,7 @@
                 <label><input type="radio" name="selected_option" value="D"> {{ question.option_d }}</label>
             </div>
         
-            <div class="buttons">
+            <div class="buttons"> 
                 {% if current_index > 0 %}
                     <button type="submit" name="prev" class="btn btn-secondary">Previous</button>
                 {% endif %}
@@ -105,20 +105,25 @@
 
     </div>
 
-    <script>
-        // JavaScript timer update
-        let remainingTime = {{ remaining_time }};  // Fetch remaining time from backend
+    <script>  // Using html the problem was it was refreshing my whole page again leading to reseting of myreponses to the Q, so used JS instead. 
+        // JS timer update
+        let remainingTime = {{ remaining_time }};  // Fetch remaining time from flask controller
+        let timerElement = document.getElementById('timer');
+        let quizForm = document.getElementById('quizSubmit');
+        let timerActive = true; // Flag to prevent multiple submissions
 
         function updateTimer() {
             if (remainingTime > 0) {
                 remainingTime--;
                 let minutes = Math.floor(remainingTime / 60);
                 let seconds = remainingTime % 60;
-                document.getElementById('timer').innerText = minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+                timerElement.innerText = minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
                 setTimeout(updateTimer, 1000);
-            } else {
-                // Auto-submit when time runs out
-                document.getElementById("quizForm").submit();
+            } else if (timerActive) {
+                timerActive = false; // Prevent multiple form submissions
+                if (quizForm) {
+                    quizForm.submit();
+                }
             }
         }
 

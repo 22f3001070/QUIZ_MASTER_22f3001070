@@ -1,7 +1,8 @@
 from model.model import *
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask import Flask, request, render_template, redirect, url_for, flash, session, Blueprint
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
+
 
 controllers = Blueprint('controllers', __name__)
 
@@ -103,11 +104,11 @@ def user_dashboard():
     
     current_time = datetime.now()
     
-    upcoming_quizzes = [] #for now the quizzes will go away automically when the time has expired, not interfering with if attmepted then disappear.
+    upcoming_quizzes = [] #for now the quizzes will go away automically when the time has expired, not interfering with "if attmepted then disappear".
     for quiz in quizzes:
         if quiz.date and quiz.time:  # Ensure both date and time exist
             quiz_datetime = datetime.combine(quiz.date, quiz.time)  # Merge date and time (EXTERNAL SOURCE)
-            if quiz_datetime >= current_time:  # Only show future quizzes
+            if quiz_datetime >= current_time:  # Only show upcoming quizzes
                 upcoming_quizzes.append(quiz)
                 
     # Fetch quizzes assigned to the user's subjects
@@ -126,6 +127,25 @@ def user_dashboard():
 @controllers.route('/start_quiz/<int:quiz_id>')
 def start_quiz(quiz_id):
     quiz = Quiz.query.get_or_404(quiz_id)
+    
+    user_id1 = session.get("user_id") 
+    
+    existing_score = Score.query.filter_by(user_id=user_id1, quiz_id=quiz_id).first() 
+    if existing_score:   # else if u try giving the quiz again it willa add another record which shldnt happen as onyl 1 chance shld be given
+                         # basically u can't use the submit button again to add anything
+        flash("Quiz already attempted!!")
+        return redirect(url_for("controllers.user_dashboard"))
+    
+    if not quiz:
+        flash("Quiz not found.", "danger")
+        return redirect(url_for('user_dashboard'))
+
+    
+    questions = Question.query.filter_by(quiz_id=quiz_id).all()
+
+    if not questions:  
+        flash("No questions available!! Contact your administrator for more information.")
+        return redirect(url_for('controllers.user_dashboard'))
     
     # Get quiz duration from the database (converting to seconds)
     duration_seconds = quiz.duration * 60  
@@ -151,13 +171,14 @@ def attempt_quiz(quiz_id):
     total_questions = len(questions)
     current_index = session.get("current_question", 0) #default:0
     user_id1 = session.get("user_id") 
-    print(user_id1)
+    
     
 
     # Auto-submit if time runs out
     quiz_end_time = session.get("quiz_end_time")
     end_time = datetime.strptime(quiz_end_time, "%Y-%m-%d %H:%M:%S")
     remaining_time = max(0, (end_time - datetime.now()).seconds)
+    print(remaining_time)
 
     if remaining_time == 0:
         return redirect(url_for("controllers.submit_quiz", quiz_id=quiz_id))
@@ -166,8 +187,19 @@ def attempt_quiz(quiz_id):
         selected_option = request.form.get("selected_option")
         print(selected_option)
         
+        existing_response = UserResponse.query.filter_by(
+        user_id=session["user_id"],
+        quiz_id=quiz_id,
+        question_id=questions[current_index].id).first()
+        
+        print(existing_response)
 
-        if selected_option:
+        if existing_response:
+            # If the response exists, update it instead of creating a new one
+            if selected_option: # Only update if the user selected an option
+                existing_response.selected_option = selected_option
+        else:
+            # Otherwise, create a new response
             user_response = UserResponse(
                 user_id=session["user_id"],
                 quiz_id=quiz_id,
@@ -176,7 +208,7 @@ def attempt_quiz(quiz_id):
             )
             
             db.session.add(user_response)
-            db.session.commit()
+        db.session.commit()
 
         
         if "next" in request.form and current_index < total_questions - 1:
@@ -202,7 +234,7 @@ def attempt_quiz(quiz_id):
 def submit_quiz(quiz_id):
     
     user_id1 = session.get("user_id") 
-    user_responses = UserResponse.query.filter_by(user_id=user_id1, quiz_id=quiz_id).all() # ensures it the correct user for the quiz
+    user_responses = UserResponse.query.filter_by(user_id=user_id1, quiz_id=quiz_id).all() # ensures it is the correct user for the quiz
    
     questions = Question.query.filter_by(quiz_id=quiz_id).all()
     print(questions)
@@ -226,7 +258,7 @@ def submit_quiz(quiz_id):
         flash("Quiz already attempted!!")
         return redirect(url_for("controllers.user_dashboard"))
     else:
-        new_score = Score(user_id=user_id1, quiz_id=quiz_id, score=total_score, percent=percent, max_score=total_questions)
+        new_score = Score(user_id=user_id1, quiz_id=quiz_id, score=total_score, percent=percent, max_score=total_questions,submitted_at=datetime.now(timezone.utc))
         db.session.add(new_score)       
     
     db.session.commit()  
@@ -250,7 +282,7 @@ def scores():
     #percent = (Score.score)/total_questions * 100
    
     user_scores = (
-        db.session.query(Quiz.id.label("quiz_id"), Quiz.title.label("quiz_title"),Quiz.date.label("quiz_date"), Score.score, Score.max_score, Score.percent)
+        db.session.query(Quiz.id.label("quiz_id"), Quiz.title.label("quiz_title"),Quiz.date.label("quiz_date"), Score.score, Score.max_score, Score.percent, Score.submitted_at)
         .join(Score, Score.quiz_id == Quiz.id)
         .filter(Score.user_id == user_id)
         .all()

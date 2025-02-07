@@ -3,7 +3,7 @@ from controllers.controllers import *
 from model.model import * 
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///shreyash1.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///shreyash2.db"
 app.config["SECRET_KEY"] = "shreyash"
 
 db.init_app(app)
@@ -32,9 +32,13 @@ with app.app_context():
 #SEARCH FUNCTIONALITY
 #SUMMARY
 
+#While editing the quiz u need to edit the time also regardless!!
+
 #Time_stamp in the scores
-#When u click the button it sends a response at that very moment creating multiple scores, we need to ensure 1 q sends only 1 respond and never more!
-#confirm once if the date and time of the quiz is deadline or the actual time of taking a quiz
+# ( Completed ) When u click the button it sends a response at that very moment creating multiple scores, we need to ensure 1 q sends only 1 respond and never more!
+#confirm once if the date and time of the quiz is deadline or the actual time of taking a quiz (Allowed)
+
+#Another functionality is admin can hide or visible the quiz whent they create
 
 #Change the title of each page in the end
 #Aesthetics

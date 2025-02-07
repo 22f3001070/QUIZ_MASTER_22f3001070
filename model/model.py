@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy 
+from datetime import datetime
 
 db = SQLAlchemy()
 
@@ -50,7 +51,11 @@ class Quiz(db.Model):
     rules = db.Column(db.String(500), nullable=True)  
     # Relationships
     chapter = db.relationship("Chapter", back_populates="quizzes")
+    
+    #Only if u delete the quiz all the data related to the quiz id in the below tables will also get deleted
     questions = db.relationship("Question", back_populates="quiz", cascade="all, delete-orphan")
+    scores = db.relationship("Score", back_populates="quiz", cascade="all, delete-orphan")
+    user_responses = db.relationship("UserResponse", cascade="all, delete-orphan")
 
 # Question table
 class Question(db.Model):
@@ -86,6 +91,7 @@ class Score(db.Model):
     score = db.Column(db.Integer, nullable=False)
     max_score = db.Column(db.Integer, nullable=False)
     percent = db.Column(db.Float, nullable=False)
+    submitted_at = db.Column(db.DateTime, default=datetime.utcnow)  # New timestamp field
 
     # Relationships
     user = db.relationship("User", back_populates="scores")
