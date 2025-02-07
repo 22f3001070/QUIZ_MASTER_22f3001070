@@ -280,6 +280,7 @@ def scores():
     
     #total_questions = len(questions)
     #percent = (Score.score)/total_questions * 100
+    a = 1+2
    
     user_scores = (
         db.session.query(Quiz.id.label("quiz_id"), Quiz.title.label("quiz_title"),Quiz.date.label("quiz_date"), Score.score, Score.max_score, Score.percent, Score.submitted_at)
