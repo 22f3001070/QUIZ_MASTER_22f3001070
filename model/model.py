@@ -91,7 +91,7 @@ class Score(db.Model):
     score = db.Column(db.Integer, nullable=False)
     max_score = db.Column(db.Integer, nullable=False)
     percent = db.Column(db.Float, nullable=False)
-    submitted_at = db.Column(db.DateTime, default=datetime.utcnow)  # New timestamp field
+    submitted_at = db.Column(db.DateTime, default=datetime)  # New timestamp field
 
     # Relationships
     user = db.relationship("User", back_populates="scores")

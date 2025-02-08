@@ -34,13 +34,12 @@ with app.app_context():
 
 #While editing the quiz u need to edit the time also regardless!!
 
-#Time_stamp in the scores
+# ( Added ) Time_stamp in the scores
 # ( Completed ) When u click the button it sends a response at that very moment creating multiple scores, we need to ensure 1 q sends only 1 respond and never more!
-#confirm once if the date and time of the quiz is deadline or the actual time of taking a quiz (Allowed)
+# Confirm once if the date and time of the quiz is deadline or the actual time of taking a quiz (Allowed)
 
 #Another functionality is admin can hide or visible the quiz whent they create
 
-#Change the title of each page in the end
 #Aesthetics
 
 #Report

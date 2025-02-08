@@ -13,11 +13,18 @@ def home():
 @controllers.route('/admin/quiz_management', methods = ['get', 'post'])
 def admin_quiz_management():
     
-    subjects = Subject.query.all()  # Fetch all subjects for the dashboard
+    search_query = request.args.get('search', '').strip()  # Get search query from URL
+    
+    if search_query:
+        subjects = Subject.query.filter(Subject.name.ilike(f"%{search_query}%")).all()  # Case-insensitive search
+    else:
+        subjects = Subject.query.all()  # Fetch all subjects for the dashboard
+    
+    
     chapters = Chapter.query.all()  # Fetch all chapters
     quizzes = Quiz.query.all()  # Fetch all quizzes
     questions = Question.query.all()  # Fetch all questions
-    return render_template('admin_dashboard_1.html', subjects=subjects, chapters=chapters, quizzes=quizzes, questions=questions)
+    return render_template('admin_dashboard_1.html', subjects=subjects, chapters=chapters, quizzes=quizzes, questions=questions , search_query=search_query)
 
 # Admin login
 @controllers.route('/admin/login', methods=['GET', 'POST'])
@@ -97,10 +104,27 @@ def user_dashboard():
         flash('Please log in to access the dashboard.')
         return redirect(url_for('controllers.login'))
     
-    quizzes = Quiz.query.all()  
+    #quizzes = Quiz.query.all()  
     
+    search_query = request.args.get('search_sub', '').strip()  # Get search query from URL
+    
+    if search_query:
+        subjects = Subject.query.filter(Subject.name.ilike(f"%{search_query}%")).all()  # Case-insensitive search
+    else:
+        subjects = Subject.query.all()  # Fetch all subjects for the dashboard
+    
+    #subjects = Subject.query.all()  # Fetch all subjects for the dashboard (ALL SUBJECTS ALSO)
     #user_id = session['user_id']
     user = User.query.get(session['user_id'])
+    
+    search_query_1 = request.args.get('search_quiz', '').strip()  # Get search query from URL
+    
+    if search_query_1:
+        quizzes = Quiz.query.filter(Quiz.title.ilike(f"%{search_query_1}%")).all()  # Case-insensitive search
+    else:
+        quizzes = Quiz.query.all()  # Fetch all quizzes
+    
+    
     
     current_time = datetime.now()
     
@@ -118,7 +142,7 @@ def user_dashboard():
 
     #username = session['username']  # Retrieve username from session
     
-    return render_template('user_dashboard.html', user=user, quizzes=upcoming_quizzes)
+    return render_template('user_dashboard.html', user=user, quizzes=upcoming_quizzes, subjects = subjects , search_query=search_query , search_query_1=search_query_1)
     
     
     
@@ -276,20 +300,31 @@ def scores():
     #quiz_id = session.get("quiz_id")
     #questions = Question.query.filter_by(quiz_id=quiz_id).all()
     
+    search_query = request.args.get("search_quiz", "").strip()  # Get the search term
+    
+    print(search_query)
+    
 
     
     #total_questions = len(questions)
     #percent = (Score.score)/total_questions * 100
-    a = 1+4
+    
    
-    user_scores = (
+    q = (
         db.session.query(Quiz.id.label("quiz_id"), Quiz.title.label("quiz_title"),Quiz.date.label("quiz_date"), Score.score, Score.max_score, Score.percent, Score.submitted_at)
         .join(Score, Score.quiz_id == Quiz.id)
         .filter(Score.user_id == user_id)
-        .all()
+        #.all()
     ) #Limitation : If the quiz is deleted by admin the user can't view their scores
+    
+    
+    if search_query:
+        q = q.filter(Quiz.title.ilike(f"%{search_query}%"))  # Case-insensitive search
 
-    return render_template("scores.html", user_scores=user_scores, user = user)
+    user_scores = q
+    print (user_scores)
+
+    return render_template("scores.html", user_scores=user_scores, user = user , search_query=search_query)
 
 
 
@@ -319,12 +354,21 @@ def admin_dashboard():
         flash('Unauthorized access.')
         return redirect(url_for('controllers.admin_login'))
     
-    users = User.query.all()  # Fetch all users for the dashboard
+    search_query = request.args.get('search', '').strip()  # Get search query from URL
+    
+    if search_query:
+        users = User.query.filter(User.username.ilike(f"%{search_query}%")).all()  # Case-insensitive search
+    else:
+        users = User.query.all()  # Fetch all users if no search query
+        
+    print(users)
+    
+    #users = User.query.all()  # Fetch all users for the dashboard
     subjects = Subject.query.all()  # Fetch all subjects for the dashboard
     chapters = Chapter.query.all()  # Fetch all chapters
     quizzes = Quiz.query.all()  # Fetch all quizzes
     questions = Question.query.all()  # Fetch all questions
-    return render_template('admin_dashboard.html', users=users, subjects=subjects, chapters=chapters, quizzes=quizzes, questions=questions)
+    return render_template('admin_dashboard.html', users=users, subjects=subjects, chapters=chapters, quizzes=quizzes, questions=questions,search_query = search_query)
 
 
 
@@ -417,11 +461,32 @@ def delete_chapter(chapter_id):
 
 @controllers.route('/admin/quizzes', methods = ['get', 'post'])
 def admin_quizzes():
+    
+    search_query = request.args.get('search_quiz', '').strip()  # Get search query from URL
+    search_query_1 = request.args.get('search_ques', '').strip()  # Get search query from URL
+    
+    if search_query:
+        quizzes = Quiz.query.filter(Quiz.title.ilike(f"%{search_query}%")).all()  # Case-insensitive search
+    else:
+        quizzes = Quiz.query.all()  # Fetch all quizzes
+        
+    #print(questions)
+        
+    print(search_query_1)      
+    if search_query_1:
+        questions = Question.query.filter(Question.title.ilike(f"%{search_query_1}%")).all()  # Case-insensitive search
+    else:
+        questions = Question.query.all()  # Fetch all questions
+        
     subjects = Subject.query.all()  # Fetch all subjects for the dashboard
     chapters = Chapter.query.all()  # Fetch all chapters
-    quizzes = Quiz.query.all()  # Fetch all quizzes
-    questions = Question.query.all()  # Fetch all questions
-    return render_template('admin_dashboard_quiz.html', subjects=subjects, chapters=chapters, quizzes=quizzes, questions=questions)
+    
+    print(questions)
+    
+    
+ 
+    
+    return render_template('admin_dashboard_quiz.html', subjects=subjects,  search_query=search_query, chapters=chapters, quizzes=quizzes, questions=questions , search_query_1=search_query_1)
 
 
 # CRUD operations for Quizzes (MILESTONE - 3)
@@ -622,13 +687,13 @@ def unblock_user(user_id):
 
 
 # Search functionality (MILESTONE - 3)
-@controllers.route('/search', methods=['GET', 'POST'])
+@controllers.route('/search_user', methods=['GET', 'POST'])
 def search():
     query = request.args.get('query')
     subjects = Subject.query.filter(Subject.name.like(f'%{query}%')).all() # Fetching all records from the subject db
     chapters = Chapter.query.filter(Chapter.name.like(f'%{query}%')).all()
-    quizzes = Quiz.query.filter(Quiz.name.like(f'%{query}%')).all()
-    questions = Question.query.filter(Question.text.like(f'%{query}%')).all()
+    quizzes = Quiz.query.filter(Quiz.title.like(f'%{query}%')).all()
+    questions = Question.query.filter(Question.title.like(f'%{query}%')).all()
     return render_template('search.html', subjects=subjects, chapters=chapters, quizzes=quizzes, questions=questions)
 
 

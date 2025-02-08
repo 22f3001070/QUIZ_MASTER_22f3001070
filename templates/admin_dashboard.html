@@ -222,8 +222,8 @@
 
     <!-- Search Bar -->
     <div class="search-container">
-        <form action="{{ url_for('controllers.search') }}" method="get">
-            <input type="text" name="query" placeholder="Search...">
+        <form method="GET" action="{{ url_for('controllers.admin_dashboard') }}">
+            <input type="text" name="search" value="{{ search_query }}" placeholder="Search by username...">
             <button type="submit">Search</button>
         </form>
     </div>

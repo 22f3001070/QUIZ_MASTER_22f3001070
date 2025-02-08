@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <title>Admin Dashboard</title>
+    <title>Quizzes Curated</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -190,6 +190,18 @@
         .btn-quiz button:hover {
             background-color: #0056b3;
         }
+        .search-wrapper {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-bottom: 10px;
+        }
+        
+        .search-container {
+            display: flex;
+            align-items: center;
+        }
+        
 
 
 
@@ -242,17 +254,24 @@
 
     <!-- Search Bar -->
     <div class="search-container">
-        <form action="{{ url_for('controllers.search') }}" method="get">
-            <input type="text" name="query" placeholder="Search...">
+        <form method="GET" action="{{ url_for('controllers.admin_quizzes') }}">
+            <input type="text" name="search_quiz" value="{{ search_query }}" placeholder="Search by Quizzes...">
             <button type="submit">Search</button>
         </form>
     </div>
+
 
     <!-- User List with Block/Unblock -->
      <p></p>
 
 
     <h2>Quizzes</h2>
+    <div class="search-wrapper">
+        <form method="GET" action="{{ url_for('controllers.admin_quizzes') }}">
+            <input type="text" name="search_ques" value="{{ search_query_1 }}" placeholder="Search by Questions...">
+            <button type="submit">Search</button>
+        </form>
+    </div>
     {% for quiz in quizzes %}
     <div class="subject-box">
         <h3 align = "center">Quiz : {{ quiz.title }}</h3>
@@ -297,28 +316,32 @@
                     <th>Question statement</th>
                     <th>Actions</th>
                 </tr>
+
             </thead>
             <tbody>
                 {% for q in quiz.questions %}
-                <tr>
-                    <td>{{ q.id }}</td>
-                    <td>{{ q.title }}</td>
-                    <td>{{ q.statement }}</td>
+                        {% if q in questions %}
+                        <tr>
 
+                            <td>{{ q.id }}</td>
+                            <td>{{ q.title }}</td>
+                            <td>{{ q.statement }}</td>
+
+                            
+                            <td class="btn-inline">
+                                <form  action = "{{ url_for('controllers.edit_question', question_id=q.id, quiz_id = q.quiz_id)  }}" method ="get" >
+                                    <button class="btn btn-sm btn-warning">Edit</button>
+                                </form><-------->
+                                <form   action = "{{ url_for('controllers.delete_question', question_id=q.id, quiz_id = q.quiz_id) }}" method = "POST">
+                                    <button class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete Question : {{q.title}}?');">Delete</button>
                     
-                    <td class="btn-inline">
-                        <form  action = "{{ url_for('controllers.edit_question', question_id=q.id, quiz_id = q.quiz_id)  }}" method ="get" >
-                            <button class="btn btn-sm btn-warning">Edit</button>
-                        </form><-------->
-                        <form   action = "{{ url_for('controllers.delete_question', question_id=q.id, quiz_id = q.quiz_id) }}" method = "POST">
-                            <button class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete Question : {{q.title}}?');">Delete</button>
-            
-                        </form>
+                                </form>
 
 
-                    </td>
-                    
-                </tr>
+                            </td>
+                            
+                        </tr>
+                    {% endif %}
                 {% endfor %}
             </tbody>
         </table> 

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <title>Admin Dashboard</title>
+    <title>Quiz Management</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -242,8 +242,8 @@
 
     <!-- Search Bar -->
     <div class="search-container">
-        <form action="{{ url_for('controllers.search') }}" method="get">
-            <input type="text" name="query" placeholder="Search...">
+        <form method="GET" action="{{ url_for('controllers.admin_quiz_management') }}">
+            <input type="text" name="search" value="{{ search_query }}" placeholder="Search by Subjects...">
             <button type="submit">Search</button>
         </form>
     </div>

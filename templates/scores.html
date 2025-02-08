@@ -10,7 +10,7 @@
 
     <style>
         body {
-            background-color:rgb(124, 150, 177);
+            background-color: rgb(124, 150, 177);
             font-family: Arial, sans-serif;
         }
 
@@ -76,18 +76,42 @@
             border-radius: 8px;
         }
 
+        .search-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
         .search-container input {
             padding: 8px;
-            border: none;
+            border: 1px solid #ccc;
             border-radius: 5px;
             outline: none;
         }
-        /* Toast Notification */
+
+       
+        .search-container button {
+            background: linear-gradient(45deg, #ff7e5f, #feb47b);
+            border: none;
+            color: white;
+            font-weight: bold;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .search-container button:hover {
+            background: linear-gradient(45deg, #ff5f6d, #ffc371);
+            transform: scale(1.05);
+        }
+
+     
         .toast {
             visibility: hidden;
             min-width: 250px;
-            margin-left: -125px; /* To center the toast */
-            background-color:rgb(108, 108, 110);
+            margin-left: -125px;
+            background-color: rgb(108, 108, 110);
             color: rgb(58, 220, 226);
             text-align: center;
             border-radius: 2px;
@@ -125,9 +149,13 @@
             <a href="{{ url_for('controllers.logout_user') }}">Logout</a>
         </div>
         <div class="search-container">
-            <input type="text" placeholder="Search...">
+            <form method="GET" action="{{ url_for('controllers.scores') }}" style="display: flex; gap: 5px;">
+                <input type="text" name="search_quiz" value="{{ search_query }}" placeholder="Search by Quiz Title...">
+                <button type="submit">🔍</button>
+            </form>
         </div>
     </div>
+
     <script>
         function showToast(message) {
             var toast = document.getElementById("toast");
