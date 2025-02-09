@@ -2,6 +2,8 @@ from model.model import *
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask import Flask, request, render_template, redirect, url_for, flash, session, Blueprint
 from datetime import datetime, timedelta, timezone
+import plotly.express as px
+import pandas as pd
 
 
 controllers = Blueprint('controllers', __name__)
@@ -206,10 +208,14 @@ def attempt_quiz(quiz_id):
 
     if remaining_time == 0:
         return redirect(url_for("controllers.submit_quiz", quiz_id=quiz_id))
+    
+    
 
     if request.method == "POST":
         selected_option = request.form.get("selected_option")
         print(selected_option)
+        
+
         
         existing_response = UserResponse.query.filter_by(
         user_id=session["user_id"],
@@ -224,6 +230,10 @@ def attempt_quiz(quiz_id):
                 existing_response.selected_option = selected_option
         else:
             # Otherwise, create a new response
+            if(not selected_option):
+                selected_option = 'Z'
+            
+            print(selected_option)
             user_response = UserResponse(
                 user_id=session["user_id"],
                 quiz_id=quiz_id,
@@ -684,18 +694,105 @@ def unblock_user(user_id):
 
 
 
+# We added the search to the contollers of their respective pages
+
+# # Search functionality (MILESTONE - 3)
+# @controllers.route('/search_user', methods=['GET', 'POST'])
+# def search():
+#     query = request.args.get('query')
+#     subjects = Subject.query.filter(Subject.name.like(f'%{query}%')).all() # Fetching all records from the subject db
+#     chapters = Chapter.query.filter(Chapter.name.like(f'%{query}%')).all()
+#     quizzes = Quiz.query.filter(Quiz.title.like(f'%{query}%')).all()
+#     questions = Question.query.filter(Question.title.like(f'%{query}%')).all()
+#     return render_template('search.html', subjects=subjects, chapters=chapters, quizzes=quizzes, questions=questions)
 
 
-# Search functionality (MILESTONE - 3)
-@controllers.route('/search_user', methods=['GET', 'POST'])
-def search():
-    query = request.args.get('query')
-    subjects = Subject.query.filter(Subject.name.like(f'%{query}%')).all() # Fetching all records from the subject db
-    chapters = Chapter.query.filter(Chapter.name.like(f'%{query}%')).all()
-    quizzes = Quiz.query.filter(Quiz.title.like(f'%{query}%')).all()
-    questions = Question.query.filter(Question.title.like(f'%{query}%')).all()
-    return render_template('search.html', subjects=subjects, chapters=chapters, quizzes=quizzes, questions=questions)
+import plotly.graph_objs as go
 
+@controllers.route("/user_summary")
+def user_summary():
+    user_id = session.get("user_id")
+    if not user_id:
+        return "Unauthorized", 401
+
+    user = User.query.get(user_id)
+    scores = Score.query.filter_by(user_id=user_id).all() #only for the logged in user
+
+    quiz_titles = [score.quiz.title for score in scores]
+    percentages_1 = [score.percent for score in scores]
+    percentages = [[score.percent, score.quiz.title] for score in scores]
+
+    # Calculate summary stats
+    num_quizzes = len(scores)
+    avg_score = round(sum(i[0] for i in percentages) / num_quizzes, 2) if num_quizzes > 0 else 0
+    best = max(percentages, default=0)
+    
+    if scores:
+        best_score = round(best[0],2)
+        best_quiz = best[1]
+    
+    else:
+        best_score = 0
+        best_quiz = 'N/a'
+    
+    
+
+    # Create a performance trend graph
+    trace = go.Scatter(x=quiz_titles, y=percentages_1, mode='lines+markers', name="Performance")
+    layout = go.Layout(title="Quiz Performance", xaxis=dict(title="Quiz"), yaxis=dict(title="Score Percentage"))
+    chart = go.Figure(data=[trace], layout=layout)
+    graph_html = chart.to_html(full_html=False)
+
+    return render_template(
+        "user_summary.html",
+        user=user,
+        num_quizzes=num_quizzes,
+        avg_score=avg_score,
+        best_score=best_score,
+        graph_html=graph_html,
+        best_quiz = best_quiz
+    )
+
+@controllers.route("/admin_summary")
+def admin_summary():
+    print("check")
+    user_count = User.query.count()
+    quiz_count = Quiz.query.count()
+    subject_count = Subject.query.count()
+    avg_score = db.session.query(db.func.avg(Score.percent)).scalar() or 0  # for all users
+
+    subjects = Subject.query.all()
+    subject_names = [subject.name for subject in subjects]
+    subject_quiz_counts = [len(subject.chapters) for subject in subjects]
+
+    # Fetching subject-wise performance
+    subject_avg_scores = []
+    for subject in subjects:
+        subject_quizzes = db.session.query(Quiz.id).join(Chapter).filter(Chapter.subject_id == subject.id).subquery()
+        avg_subject_score = db.session.query(db.func.avg(Score.percent)).filter(Score.quiz_id.in_(subject_quizzes)).scalar() or 0
+        subject_avg_scores.append(round(avg_subject_score, 2))
+
+    # Bar chart for quizzes per subject
+    bar_trace = go.Bar(x=subject_names, y=subject_quiz_counts, name="Quizzes per Subject")
+    bar_layout = go.Layout(title="Quizzes per Subject", xaxis=dict(title="Subject"), yaxis=dict(title="Number of Quizzes"))
+    bar_chart = go.Figure(data=[bar_trace], layout=bar_layout)
+    bar_chart_html = bar_chart.to_html(full_html=False)
+
+    # Bar chart for subject-wise performance
+    perf_trace = go.Bar(x=subject_names, y=subject_avg_scores, name="Average Score (%)", marker=dict(color="orange"))
+    perf_layout = go.Layout(title="Subject-wise Average Scores", xaxis=dict(title="Subject"), yaxis=dict(title="Average Score (%)"))
+    perf_chart = go.Figure(data=[perf_trace], layout=perf_layout)
+    perf_chart_html = perf_chart.to_html(full_html=False)
+
+    return render_template(
+        "admin_summary.html",
+        user_count=user_count,
+        quiz_count=quiz_count,
+        subject_count=subject_count,
+        avg_score=round(avg_score, 2),
+        bar_chart_html=bar_chart_html,
+        perf_chart_html=perf_chart_html  
+    )
 
 
 

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Summary</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <style>
+        body {
+            background-color: rgb(124, 150, 177);
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            margin-top: 20px;
+        }
+        .summary-box {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .chart-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2 class="text-center text-primary">Summary of User Performances</h2>
+
+        <div class="row mt-4">
+            <div class="col-md-3">
+                <div class="summary-box">
+                    <h4>Total Users</h4>
+                    <p class="fs-3 text-primary">{{ user_count }}</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="summary-box">
+                    <h4>Total Quizzes</h4>
+                    <p class="fs-3 text-primary">{{ quiz_count }}</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="summary-box">
+                    <h4>Total Subjects</h4>
+                    <p class="fs-3 text-primary">{{ subject_count }}</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="summary-box">
+                    <h4>Average Score (%)</h4>
+                    <p class="fs-3 text-primary">{{ avg_score }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <h3 class="text-center">Quizzes Per Subject</h3>
+            {{ bar_chart_html|safe }}
+        </div>
+
+        <div class="chart-container">
+            <h3 class="text-center">Subject-wise Performance</h3>
+            {{ perf_chart_html|safe }}
+        </div>
+
+        <div class="text-center mt-4">
+            <a href="{{ url_for('controllers.admin_dashboard') }}" class="btn btn-primary">Return to Dashboard</a>
+        </div>
+    </div>
+
+</body>
+</html>

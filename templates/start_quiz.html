@@ -84,7 +84,7 @@
             </div>
         
             <div class="options">
-                <label><input type="radio" name="selected_option" value="A"> {{ question.option_a }}</label>
+                <label><input type="radio" name="selected_option" value="A"> {{ question.option_a }}</label> <!--Placeholder can be added!-->
                 <label><input type="radio" name="selected_option" value="B"> {{ question.option_b }}</label>
                 <label><input type="radio" name="selected_option" value="C"> {{ question.option_c }}</label>
                 <label><input type="radio" name="selected_option" value="D"> {{ question.option_d }}</label>
@@ -98,7 +98,7 @@
                 {% if current_index < total_questions - 1 %}
                     <button type="submit" name="next" class="btn btn-primary">Save and Next</button>
                 {% else %}
-                    <button type="submit" name="submit" class="btn btn-success">Submit</button>
+                    <button type="submit" name="submit" id ="sub" class="btn btn-success">Submit</button>
                 {% endif %}
             </div>
         </form>
@@ -112,6 +112,11 @@
         let quizForm = document.getElementById('quizSubmit');
         let timerActive = true; // Flag to prevent multiple submissions
 
+        function AutoButton() {
+            document.getElementById('sub').click();
+        }
+
+
         function updateTimer() {
             if (remainingTime > 0) {
                 remainingTime--;
@@ -120,9 +125,11 @@
                 timerElement.innerText = minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
                 setTimeout(updateTimer, 1000);
             } else if (timerActive) {
-                timerActive = false; // Prevent multiple form submissions
+                timerActive = false; // Prevent multiple form submissions (since there is a sleep of 1 sec)
                 if (quizForm) {
-                    quizForm.submit();
+                   
+
+                    AutoButton();  // Ensure form submission
                 }
             }
         }

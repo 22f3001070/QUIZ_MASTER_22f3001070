@@ -29,21 +29,27 @@ with app.app_context():
     db.create_all()
     create_admin()
     
-#SEARCH FUNCTIONALITY
-#SUMMARY
+# (Done) SEARCH FUNCTIONALITY
+# (Done) SUMMARY
 
-#While editing the quiz u need to edit the time also regardless!!
+
 
 # ( Added ) Time_stamp in the scores
 # ( Completed ) When u click the button it sends a response at that very moment creating multiple scores, we need to ensure 1 q sends only 1 respond and never more!
 # Confirm once if the date and time of the quiz is deadline or the actual time of taking a quiz (Allowed)
 
-#Another functionality is admin can hide or visible the quiz whent they create
+# Another functionality is admin can hide or visible the quiz when they create
+# Another functionality is showing incorrect and correct reponses to to users for each question
 
-#Aesthetics
+#Limitations: 
+# 1) HAVE TO CHANGE THE TIME WHILE EDITING THE QUIZ, 
+# 2) PLACEHOLDER FOR THE OPTION ARLEADY SELECTED BY THE USER, 
+# 3) Deleting the Quiz by admin removes all the records for the users including their scores and summary pertaining to that quiz
 
-#Report
-#Video
+# Aesthetics (DONE)
+
+# Report
+# Video
     
 
 

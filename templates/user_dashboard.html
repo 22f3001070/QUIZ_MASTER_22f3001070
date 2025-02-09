@@ -333,13 +333,13 @@
    
 
     <div class="nav-bar">
-        <div>
+        <div class="mt-1">
             <a href="{{ url_for('controllers.user_dashboard') }}">Home</a>
             <a></a>
             
             <a href="{{ url_for('controllers.scores') }}">Scores</a>
             <a></a>
-            <a href="#">Summary</a>
+            <a href="{{ url_for('controllers.user_summary') }}">Summary</a>
             <a></a>
             <a href="{{ url_for('controllers.logout_user') }}">Logout</a>
             
