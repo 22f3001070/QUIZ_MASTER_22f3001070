@@ -4,6 +4,7 @@ from flask import Flask, request, render_template, redirect, url_for, flash, ses
 from datetime import datetime, timedelta, timezone
 import plotly.express as px
 import pandas as pd
+import plotly.graph_objs as go
 
 
 controllers = Blueprint('controllers', __name__)
@@ -694,7 +695,7 @@ def unblock_user(user_id):
 
 
 
-# We added the search to the contollers of their respective pages
+# We added the search to the contollers of their respective pages instead.
 
 # # Search functionality (MILESTONE - 3)
 # @controllers.route('/search_user', methods=['GET', 'POST'])
@@ -707,7 +708,7 @@ def unblock_user(user_id):
 #     return render_template('search.html', subjects=subjects, chapters=chapters, quizzes=quizzes, questions=questions)
 
 
-import plotly.graph_objs as go
+
 
 @controllers.route("/user_summary")
 def user_summary():
@@ -763,7 +764,13 @@ def admin_summary():
 
     subjects = Subject.query.all()
     subject_names = [subject.name for subject in subjects]
-    subject_quiz_counts = [len(subject.chapters) for subject in subjects]
+    
+    subject_quiz_counts = []
+    for subject in subjects:
+        x = subject.chapters
+        for i in x:
+            subject_quiz_counts.append(len(i.quizzes))
+    
 
     # Fetching subject-wise performance
     subject_avg_scores = []

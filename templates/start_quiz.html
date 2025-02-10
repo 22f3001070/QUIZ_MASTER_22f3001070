@@ -62,9 +62,12 @@
         .submit-btn {
             margin-top: 20px;
         }
+
     </style>
 </head>
 <body>
+
+    
 
     <!-- Timer at top-right -->
     <div class="timer-box">
@@ -97,9 +100,8 @@
                 
                 {% if current_index < total_questions - 1 %}
                     <button type="submit" name="next" class="btn btn-primary">Save and Next</button>
-                {% else %}
-                    <button type="submit" name="submit" id ="sub" class="btn btn-success">Submit</button>
                 {% endif %}
+                <button type="submit" name="submit" id ="sub" class="btn btn-success">Submit</button>
             </div>
         </form>
 
@@ -127,6 +129,7 @@
             } else if (timerActive) {
                 timerActive = false; // Prevent multiple form submissions (since there is a sleep of 1 sec)
                 if (quizForm) {
+                    console.log("Please check for timer...");
                    
 
                     AutoButton();  // Ensure form submission

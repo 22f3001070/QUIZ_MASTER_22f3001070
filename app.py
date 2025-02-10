@@ -36,7 +36,7 @@ with app.app_context():
 
 # ( Added ) Time_stamp in the scores
 # ( Completed ) When u click the button it sends a response at that very moment creating multiple scores, we need to ensure 1 q sends only 1 respond and never more!
-# Confirm once if the date and time of the quiz is deadline or the actual time of taking a quiz (Allowed)
+# (Allowed) Confirm once if the date and time of the quiz is deadline or the actual time of taking a quiz 
 
 # Another functionality is admin can hide or visible the quiz when they create
 # Another functionality is showing incorrect and correct reponses to to users for each question
