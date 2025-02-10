@@ -54,13 +54,16 @@ def login():
         password = request.form['password']
 
         user = User.query.filter_by(email=email).first()
+        print(user)
         
-        if user.roles == 'blocked' :
-            flash('You have been Blocked. Contact your administrator for more information.')
-            return redirect(url_for('controllers.login'))
+        if user:
+            if user.roles == 'blocked' :
+                flash('You have been Blocked. Contact your administrator for more information.')
+                return redirect(url_for('controllers.login'))
         if user and check_password_hash(user.password, password):
             session['user_id'] = user.id
             session['role'] = user.roles
+         
             flash("Login successful!") # Oncce we add the toast in user_dashboard it will reflect there only
             if user.roles == 'Admin':
                 return redirect(url_for('controllers.admin_dashboard'))
@@ -232,7 +235,7 @@ def attempt_quiz(quiz_id):
         else:
             # Otherwise, create a new response
             if(not selected_option):
-                selected_option = 'Z'
+                selected_option = '-'
             
             print(selected_option)
             user_response = UserResponse(
@@ -280,11 +283,12 @@ def submit_quiz(quiz_id):
 
     total_score = 0  
 
-    for response in user_responses:
+    for response in user_responses: # Since we are taking from the user_response table itself, if a q wasn't even seen and hence,
+                                    # not added to the table won't be drafted for calculations
         question = Question.query.get((response.question_id, quiz_id))
         print(response.selected_option)
         if  response.selected_option == question.correct_option:
-            total_score += 1 #adds only for the correct user
+            total_score += 1 # adds only for the correct user
     percent = (total_score)/total_questions * 100
             
     existing_score = Score.query.filter_by(user_id=user_id1, quiz_id=quiz_id).first() 
