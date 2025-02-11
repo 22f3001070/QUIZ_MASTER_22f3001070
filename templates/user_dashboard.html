@@ -324,9 +324,15 @@
 
 <body>
 
+    
+
     <h1 class="welcome-text">{{ user.username }}'s Dashboard</h1>
+    <header>
+        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Quiz Master Logo" width="50">
+    </header>
 
     <div class="dashboard-container">
+        
 
         <div id="toast" class="toast"></div>
 

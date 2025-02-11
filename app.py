@@ -41,6 +41,7 @@ with app.app_context():
 # Another functionality is admin can hide or visible the quiz when they create
 # Another functionality is showing incorrect and correct reponses to to users for each question
 # Another functionality is assigning different points to questions rather than a fixed 1.
+# Adding a logo!
 
 #Limitations: 
 # 1) HAVE TO CHANGE THE TIME WHILE EDITING THE QUIZ, 

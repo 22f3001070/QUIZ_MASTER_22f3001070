@@ -9,9 +9,7 @@ class User(db.Model):
     username = db.Column(db.String(50), nullable=False, unique = True)
     email = db.Column(db.String(50), nullable=False, unique = True)
     password = db.Column(db.String(50), nullable=False)
-    #post = db.relationship("Post", backref="user",lazy = True)
-
-
+   
     roles = db.Column(db.String(10), nullable=False, default="Student")  # 'admin' or 'student'
 
     # Relationships
