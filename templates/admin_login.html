@@ -62,9 +62,27 @@
         .login-container .redirect-link a:hover {
             text-decoration: underline;
         }
+        header.logo
+        {
+            position: absolute;
+            left: 10px;
+            top: 15px;
+            
+            height:10px;
+            margin-top: 5px 0;
+            
+           
+           
+
+            box-shadow: 0px 4px 22px rgba(51, 236, 208, 0.86);
+            
+        }
     </style>
 </head>
 <body>
+    <header class="logo">
+        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Quiz Master Logo" width="105" >
+    </header>
     <div class="login-container">
         <h1>Welcome to Quiz Master</h1>
         <h2>Admin Login</h2>

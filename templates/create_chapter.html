@@ -56,6 +56,17 @@
             padding: 10px;
             margin-top: 5px;
         }
+        header.logo
+        {
+            position: absolute;
+            right: 30px;
+            top: 13.3px;
+            
+            height:10px;
+            margin-top: 5px 0;
+            box-shadow: 0px 4px 22px rgba(37, 214, 152, 0.86);
+            
+        }
 
 
 
@@ -64,6 +75,10 @@
 <body>
 
     <h1> New Chapter </h1>
+    <header class="logo">
+        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Quiz Master Logo" width="50">
+    </header>
+
 
     <div class = "chapter-container">
         <form method="POST" action="{{ url_for('controllers.create_chapter',subject_id = subject.id) }}">

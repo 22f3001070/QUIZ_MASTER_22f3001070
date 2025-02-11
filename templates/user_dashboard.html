@@ -316,6 +316,21 @@
             color:hsl(40, 95.40%, 33.90%);
             font-weight: bold;
         }
+        header.logo
+        {
+            position: absolute;
+            right: 735px;
+            top: 15px;
+            
+            height:10px;
+            margin-top: 5px 0;
+            
+           
+           
+
+            box-shadow: 0px 4px 22px rgba(133, 36, 202, 0.86);
+            
+        }
 
 
 
@@ -327,13 +342,14 @@
     
 
     <h1 class="welcome-text">{{ user.username }}'s Dashboard</h1>
-    <header>
-        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Quiz Master Logo" width="50">
+
+    <header class="logo">
+        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Quiz Master Logo" width="55" >
     </header>
+
 
     <div class="dashboard-container">
         
-
         <div id="toast" class="toast"></div>
 
 

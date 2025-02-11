@@ -83,12 +83,28 @@
             color: black;
             box-shadow: 0 0 15px gold;
         }
+        header.logo
+        {
+            position: absolute;
+            right: 30px;
+            top: 13.3px;
+            
+            height:10px;
+            margin-top: 5px 0;
+            box-shadow: 0px 4px 22px rgba(133, 36, 202, 0.86);
+            
+        }
+
+        
 
     </style>
 </head>
 <body>
 
     <h1> Quiz Details</h1>
+    <header class="logo">
+        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Quiz Master Logo" width="50">
+    </header>
 
     <div class="container">
         

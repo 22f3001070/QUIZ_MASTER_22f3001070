@@ -137,6 +137,18 @@
             from {opacity: 1;}
             to {opacity: 0;}
         }
+        header.logo
+        {
+            position: absolute;
+            right: 750px;
+            top: 13.3px;
+            
+            height:10px;
+            margin-top: 5px 0;
+            box-shadow: 0px 4px 22px rgba(133, 36, 202, 0.86);
+            
+        }
+
     </style>
 </head>
 <body>
@@ -148,6 +160,10 @@
             <a href="{{ url_for('controllers.user_summary') }}">Summary</a>
             <a href="{{ url_for('controllers.logout_user') }}">Logout</a>
         </div>
+        <header class="logo">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Quiz Master Logo" width="50">
+        </header>
+    
         <div class="search-container">
             <form method="GET" action="{{ url_for('controllers.scores') }}" style="display: flex; gap: 5px;">
                 <input type="text" name="search_quiz" value="{{ search_query }}" placeholder="Search by Quiz Title...">

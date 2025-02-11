@@ -30,12 +30,26 @@
             box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
             margin-top: 20px;
         }
+        header.logo
+        {
+            position: absolute;
+            right: 30px;
+            top: 13.3px;
+            
+            height:10px;
+            margin-top: 5px 0;
+            box-shadow: 0px 4px 22px rgba(37, 214, 152, 0.86);
+            
+        }
     </style>
 </head>
 <body>
 
     <div class="container">
         <h2 class="text-center text-primary">Summary of User Performances</h2>
+        <header class="logo">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Quiz Master Logo" width="55" >
+        </header>
 
         <div class="row mt-4">
             <div class="col-md-3">

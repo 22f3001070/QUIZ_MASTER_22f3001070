@@ -74,12 +74,33 @@
             box-shadow: 0px 4px 6px rgba(79, 92, 237, 0.86);
 
         }
+        header.logo
+        {
+            position: absolute;
+            right: 712.5px;
+            top: 15px;
+            
+            height:10px;
+            margin-top: 5px 0;
+            
+           
+           
+
+            box-shadow: 0px 4px 22px rgba(87, 56, 239, 0.86);
+            
+        }
 
     </style>
 </head>
 <body>
 
     <h4 class ="Q">Question {{ current_index + 1 }} of {{ total_questions }}</h4>
+
+
+    <header class="logo">
+        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Quiz Master Logo" width="110" >
+    </header>
+
 
     
 
@@ -90,7 +111,7 @@
 
     <!-- Quiz Box -->
     <div class="quiz-container">
-        <h3>Quiz Master </h3>
+        
         
 
 
