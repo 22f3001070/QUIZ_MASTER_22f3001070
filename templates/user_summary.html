@@ -38,12 +38,20 @@
             box-shadow: 0px 4px 22px rgba(133, 36, 202, 0.86);
             
         }
+        h2.h{
+            color: purple;
+            background: rgba(134, 206, 232, 0.88);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2 class="text-center"> {{ user.username }}'s Performance </h2>
+    <h2 class="h"> {{ user.username }}'s Performance </h2>
     <header class="logo">
         <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Quiz Master Logo" width="50">
     </header>
