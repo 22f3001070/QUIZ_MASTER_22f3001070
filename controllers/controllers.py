@@ -744,7 +744,7 @@ def user_summary():
 
     # Create a performance trend graph
     trace = go.Scatter(x=quiz_titles, y=percentages_1, mode='lines+markers', name="Performance")
-    layout = go.Layout(title="Quiz Performance", xaxis=dict(title="Quiz"), yaxis=dict(title="Score Percentage"))
+    layout = go.Layout(title="Quiz Performance", xaxis=dict(title="Quiz"), yaxis=dict(title="Score Percentage"),plot_bgcolor="rgba(20, 1, 32, 0.76)", paper_bgcolor="rgba(20, 1, 32, 0.76)",font=dict(color="white"))
     chart = go.Figure(data=[trace], layout=layout)
     graph_html = chart.to_html(full_html=False)
 
@@ -785,13 +785,13 @@ def admin_summary():
 
     # Bar chart for quizzes per subject
     bar_trace = go.Bar(x=subject_names, y=subject_quiz_counts, name="Quizzes per Subject")
-    bar_layout = go.Layout(title="Quizzes per Subject", xaxis=dict(title="Subject"), yaxis=dict(title="Number of Quizzes"))
+    bar_layout = go.Layout( xaxis=dict(title="Subject"), yaxis=dict(title="Number of Quizzes"),plot_bgcolor="black", paper_bgcolor="black",font=dict(color="white"))
     bar_chart = go.Figure(data=[bar_trace], layout=bar_layout)
     bar_chart_html = bar_chart.to_html(full_html=False)
 
     # Bar chart for subject-wise performance
     perf_trace = go.Bar(x=subject_names, y=subject_avg_scores, name="Average Score (%)", marker=dict(color="orange"))
-    perf_layout = go.Layout(title="Subject-wise Average Scores", xaxis=dict(title="Subject"), yaxis=dict(title="Average Score (%)"))
+    perf_layout = go.Layout( xaxis=dict(title="Subject"), yaxis=dict(title="Average Score (%)"),plot_bgcolor="black", paper_bgcolor="black",font=dict(color="white"))
     perf_chart = go.Figure(data=[perf_trace], layout=perf_layout)
     perf_chart_html = perf_chart.to_html(full_html=False)
 
