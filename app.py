@@ -1,29 +1,32 @@
 from flask import Flask, render_template
 from controllers.controllers import *
 from model.model import * 
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///shreyash2.db"
-app.config["SECRET_KEY"] = "shreyash"
+app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
+app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 
 db.init_app(app)
 app.register_blueprint(controllers)
 
 def create_admin():
-
+    
     with app.app_context():
-        admin_email = "shreyashmad_admin@MAD1P.com"
-        admin_user = User.query.filter_by(email = admin_email).first()
+        admin_email = os.getenv("ADMIN_EMAIL")
+        admin_password = os.getenv("ADMIN_PASSWORD")
+        admin_user = User.query.filter_by(email=admin_email).first()
         if not admin_user:
             admin_username = "S_admin"
-            admin_password = "S4091"
-            admin_user = User( username=admin_username, email=admin_email, password = admin_password, roles="Admin")
+            admin_user = User(username=admin_username, email=admin_email, password=admin_password, roles="Admin")
             db.session.add(admin_user)
             db.session.commit()
             print("Admin created successfully")
         else:
             print("Admin already exists")
-
 
 with app.app_context():
     db.create_all()

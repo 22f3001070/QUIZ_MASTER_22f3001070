@@ -13,6 +13,10 @@
             margin: 0;
             padding: 20px;
             background-color: rgb(160, 157, 157);
+            background-image: url("{{ url_for('static', filename='images/pic_4.jpg') }}"); 
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
             
           
         }
@@ -302,7 +306,7 @@
         }
 
         h1.welcome-text {
-            color:hsl(43, 9.50%, 37.30%); 
+            color:hsl(45, 2.70%, 28.60%); 
             font-weight: bold;
             
             animation: textGlow 3s infinite alternate;
