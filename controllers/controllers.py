@@ -743,7 +743,7 @@ def user_summary():
     
 
     # Create a performance trend graph
-    trace = go.Scatter(x=quiz_titles, y=percentages_1, mode='lines+markers', name="Performance")
+    trace = go.Scatter(x=quiz_titles, y=percentages_1, mode='lines+markers', name="Performance", marker=dict(color="red"))
     layout = go.Layout(title="Quiz Performance", xaxis=dict(title="Quiz"), yaxis=dict(title="Score Percentage"),plot_bgcolor="rgba(20, 1, 32, 0.76)", paper_bgcolor="rgba(20, 1, 32, 0.76)",font=dict(color="white"))
     chart = go.Figure(data=[trace], layout=layout)
     graph_html = chart.to_html(full_html=False)
